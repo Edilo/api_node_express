@@ -1,4 +1,8 @@
 SEQUENCIA PARA CRIAR O PROJETO
+
+Instalar todas as dependências indicadas no package.json
+### npm install
+
 Criar o arquivo package.json
 ### npm init -y
 
@@ -12,7 +16,6 @@ Acessar o projeto no servidor
 ### http://localhost:8080
 
 Instalar o módulo para reiniciar o servidor sempre quando houver alguma alteração no código fonte,
--g significa globalmente.
 ### npm install -g nodemon
 
 Instalar a dependencia JWT
