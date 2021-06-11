@@ -26,3 +26,12 @@ Gerenciar variáveis de ambiente
 
 Permitir acesso a API
 ### npm install --save cors
+
+Instalar o driver de banco de dados
+### npm install --save mysql2
+
+Gerenciar banco de dados
+### npm install --save sequelize
+
+Instalar o modulo de criptografar a senha
+### npm install --save bcryptjs

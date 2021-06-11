@@ -1,9 +1,12 @@
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const cors = require('cors');
 const { eAdmin } = require('./middlewares/auth');
+const Usuario = require('./models/Usuario');
+
 
 app.use(express.json());
 
@@ -26,11 +29,24 @@ app.get('/usuarios', eAdmin, function(req, res){
     });
 });
 
-app.post('/login', function(req, res){
-    if(req.body.usuario === 'edilo13@gmail.com' && req.body.senha === '123456'){
-        const { id } = 1;
+app.post('/login', async (req, res) => {
+    
+    const usuario = await Usuario.findOne({where: {email: req.body.usuario}});
+    if(usuario === null){
+        return res.json({
+            erro: false,
+            message: "Usuário não encontrado!"
+        });
+    }
+
+    if(!(await bcrypt.compare(req.body.senha, usuario.senha))){
+        return res.json({
+            erro: false,
+            message: "Erro: senha inválida!"
+        });
+    }
         var privateKey = process.env.SECRET;
-        var token = jwt.sign({id}, privateKey,{
+        var token = jwt.sign({id: usuario.id}, privateKey,{
             // expiresIn: 600 //10minutos
             expiresIn: '7d'
         })
@@ -40,14 +56,25 @@ app.post('/login', function(req, res){
             dados: req.body,
             token
         });
-    }
-    return res.json({
-        erro: false,
-        message: "Login inválido",
-        dados: req.body
-    });
-    
 });
+
+app.post('/usuario', async (req, res) => {
+    var dados = req.body;
+    // return res.json({dados: req.body});
+    dados.senha = await bcrypt.hash(dados.senha, 8);
+
+    await Usuario.create(req.body).then(function(){
+        return res.json({
+            erro: false,
+            message: "Usuário cadastrado com sucesso!",
+        });
+    }).catch(function(){
+        return res.json({
+            erro: false,
+            message: "Não foi possível cadastrar o usuário!"
+        });
+    });
+})
 
 
 
